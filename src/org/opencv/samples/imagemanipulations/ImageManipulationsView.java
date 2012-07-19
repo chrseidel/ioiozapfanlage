@@ -92,10 +92,10 @@ class ImageManipulationsView extends SampleCvViewBase {
 //        	capture.retrieve(mRgba, Highgui.CV_CAP_ANDROID_COLOR_FRAME_RGBA);
 //        	Imgproc.cvtColor(mRgba, mRgba, Imgproc.COLOR_BGRA2GRAY, 4);
     	
-        	capture.retrieve(mRgba, Highgui.CV_CAP_ANDROID_GREY_FRAME);
-        	Imgproc.resize(mRgba, mRgba, new Size(40,30));
+        	capture.retrieve(mRgba, Highgui.CV_CAP_ANDROID_GREY_FRAME); // Schwarzweißbild der Camera holen
+        	Imgproc.resize(mRgba, mRgba, new Size(40,30)); // auf 40*30 pxl herunterskalieren (perfomance & weniger Störungen)
  
-            Imgproc.Canny(mRgba, mRgba, ImageManipulationsActivity.t1,ImageManipulationsActivity.t2);
+            Imgproc.Canny(mRgba, mRgba, ImageManipulationsActivity.t1,ImageManipulationsActivity.t2); //Kantenerkennung
 
             Mat lines = new Mat();
             int threshold = 3;
@@ -103,12 +103,12 @@ class ImageManipulationsView extends SampleCvViewBase {
             int lineGap = 3;
 
             //Imgproc.HoughLines(mIntermediateMat,lines,1,Math.PI/180, 10);
-            Imgproc.HoughLinesP(mRgba, lines, 1, Math.PI, threshold, minLineSize, lineGap);
+            Imgproc.HoughLinesP(mRgba, lines, 1, Math.PI, threshold, minLineSize, lineGap); // horizontale Linien finden
 
             final int MAX = 999;
             Point start = new Point(MAX,MAX); 
             Point end = new Point(MAX,MAX);
-            for (int x = 0; x < lines.cols(); x++)
+            for (int x = 0; x < lines.cols(); x++) // höchste Linie finden
             {
                   double[] vec = lines.get(0, x);
             	  if(vec[0]<start.x)
@@ -119,11 +119,11 @@ class ImageManipulationsView extends SampleCvViewBase {
             		  end.y   =	vec[3];
             	  }
             }
-            Imgproc.cvtColor(mRgba, mRgba, Imgproc.COLOR_GRAY2BGRA, 4);
+            Imgproc.cvtColor(mRgba, mRgba, Imgproc.COLOR_GRAY2BGRA, 4); // wieder in Farbbild wandeln
             if(start.x!=MAX)
-            	Core.line(mRgba, start, end, new Scalar(255,0,0), 1);
+            	Core.line(mRgba, start, end, new Scalar(255,0,0), 1); // Rote Linie einzeichnen
             
-            Imgproc.resize(mRgba, mRgba, maxSize);
+            Imgproc.resize(mRgba, mRgba, maxSize); // Auf die Displaygröße skalieren (nur zur Anzeige)
             
         Bitmap bmp = Bitmap.createBitmap(mRgba.cols(), mRgba.rows(), Bitmap.Config.ARGB_8888);
 
